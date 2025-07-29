@@ -2,9 +2,11 @@
 
 #region using statements
 
+using DataJuggler.PixelDatabase;
+using DataJuggler.RealESRGAN.Enumerations;
 using DataJuggler.UltimateHelper;
 using System.Diagnostics;
-using DataJuggler.RealESRGAN.Enumerations;
+using System.Runtime.Versioning;
 
 #endregion
 
@@ -15,6 +17,7 @@ namespace DataJuggler.RealESRGAN
     /// <summary>
     /// This class is used to upscale Images
     /// </summary>
+    [SupportedOSPlatform("windows")]
     public static class RealESRGANHelper
     {
     
@@ -96,11 +99,11 @@ namespace DataJuggler.RealESRGAN
             }
             #endregion
             
-            #region UpscaleImage(string inputPath, string outputPath, UpscaleModelEnum model)
+            #region UpscaleImage(string inputPath, string outputPath, UpscaleModelEnum mod, int width = 0, int height = 0
             /// <summary>
             /// Upscales an image using RealESRGAN and writes output to specified location.
             /// </summary>
-            public static bool UpscaleImage(string inputPath, string outputPath, UpscaleModelEnum model)
+            public static bool UpscaleImage(string inputPath, string outputPath, UpscaleModelEnum model, int width = 0, int height = 0)
             {
                 // initial value
                 bool success = false;
@@ -135,6 +138,23 @@ namespace DataJuggler.RealESRGAN
 
                             // Did this work?
                             success = FileHelper.Exists(outputPath);
+
+                            // if the upscale was successful and the width and height was passed in
+                            if ((success) && (width > 0) && (height > 0))
+                            {  
+                                // load a database    
+                                PixelDatabase.PixelDatabase resized = PixelDatabaseLoader.LoadPixelDatabase(outputPath, null);
+
+                                // If the resized object exists
+                                if (NullHelper.Exists(resized))
+                                {
+                                    // Delete the file
+                                    File.Delete(outputPath);
+
+                                    // Save the file
+                                    resized.SaveAs(outputPath);
+                                }
+                            }
                         }
                     }
                 }

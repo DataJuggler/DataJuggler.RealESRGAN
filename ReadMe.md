@@ -14,8 +14,6 @@ https://github.com/DataJuggler/Leonard
 
 ---
 
-## Project Structure
-
 DataJuggler.RealESRGAN/  
 ├── RealESRGANHelper.cs  
 ├── Enumerations/  
@@ -29,6 +27,8 @@ DataJuggler.RealESRGAN/
 │       ├── remacri  
 │       ├── ultrasharp  
 │       └── ultramix_balanced  
+├── Dependencies/  
+│   └── DataJuggler.PixelDatabase  
 
 Note: The RealESRGAN folder is automatically included and copied to the output folder 
 when the project builds.
@@ -93,7 +93,21 @@ Upscales a single image using a specified model.
     // perform the upscale
     bool result = RealESRGANHelper.UpscaleImage(input, output, model);
 
----
+    // Perform the Upscale with width & height
+    int width = 1920;
+    int height = 1080;
+
+    // perform the upscale
+    bool result = RealESRGANHelper.UpscaleImage(input, output, mode, width, height);
+
+# Note: How Resizing To A Specific Size Works
+
+At the time of this writing (July 2025) The Vulkan upscaler models used in this project
+will upscale the image by four times. Meaning an 800 x 600 image will becomes 3200 x 2400.
+
+To convert to a specific size, my NuGet package DataJuggler.PixelDatabase will resize the image
+to the specific height and width. Under the hood DataJuggler.PixelDatabase using System.Drawing.
+This can and will stretch your image. 
 
 ### GetModelPath
 
@@ -108,14 +122,14 @@ Returns the actual model name string for the given enum.
 
 When calling UpscaleImage, the enum values map to Real-ESRGAN model names as shown below:
 
-| Enum Value     | Model Name                |
-|----------------|---------------------------|
-| Standard       | realesrgan-x4plus         |
-| Anime          | realesrgan-x4plus-anime   |
-| Fast           | realesrgan-x4fast         |
-| Remacri        | remacri                   |
-| UltraSharp     | ultrasharp                |
-| UltraMix       | ultramix_balanced         |
+UpscaleModelEnum → Model Name Mapping  
+--------------------------------------
+Standard                   realesrgan-x4plus  
+Anime                       realesrgan-x4plus-anime  
+Fast                          realesrgan-x4fast  
+Remacri                    remacri  
+UltraSharp                ultrasharp  
+UltraMix                    ultramix_balanced  
 
 ---
 
@@ -155,6 +169,16 @@ below to choose the best model for your needs.
 
 ---
 
+## Change Log
+
+7.29.2025: Version 1.0.0
+
+Initial Release
+
+7.29.2025: Version 1.0.1:
+
+I added two optional parameters to the UpscaleImage method for width & height. 
+If you leave this parameters blank the image will be upscaled to 4 x the original size.
 
 ## Credits
 
