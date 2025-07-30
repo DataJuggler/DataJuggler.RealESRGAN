@@ -1,37 +1,49 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.0.1</Version>
-    <Description>Used with project Leonard, this library performs 4× image upscaling using Vulkan-based Real-ESRGAN. Call UpscaleImage with an input image, output path, and model to generate high-quality results.</Description>
-    <PackageProjectUrl>https://github.com/DataJuggler/DataJuggler.RealESRGAN</PackageProjectUrl>
-    <Copyright>2025</Copyright>
-    <PackageIcon>Upscale.png</PackageIcon>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageReadmeFile>ReadMe.md</PackageReadmeFile>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Version>1.0.2</Version>
+		<Description>Used with project Leonard, this library performs 4× image upscaling using Vulkan-based Real-ESRGAN. Call UpscaleImage with an input image, output path, and model to generate high-quality results.</Description>
+		<PackageProjectUrl>https://github.com/DataJuggler/DataJuggler.RealESRGAN</PackageProjectUrl>
+		<Copyright>2025</Copyright>
+		<PackageIcon>Upscale.png</PackageIcon>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>ReadMe.md</PackageReadmeFile>
+	</PropertyGroup>
 
+	<!-- Package references -->
 	<ItemGroup>
-		<None Include="RealESRGAN\**\*.*" Pack="true" PackagePath="contentFiles\any\any\RealESRGAN" CopyToOutputDirectory="PreserveNewest" />
+		<PackageReference Include="DataJuggler.FFmpeg" Version="1.0.3" />
+		<PackageReference Include="DataJuggler.PixelDatabase" Version="9.0.1" />
 	</ItemGroup>
 
+	<!-- Content to pack -->
 	<ItemGroup>
-	  <PackageReference Include="DataJuggler.FFmpeg" Version="1.0.2" />
-	  <PackageReference Include="DataJuggler.PixelDatabase" Version="9.0.1" />
+		<None Include="RealESRGAN\**\*.*">
+			<Pack>true</Pack>
+			<PackagePath>contentFiles\any\any\RealESRGAN\</PackagePath>
+		</None>
+
+		<!-- Include the .targets file -->
+		<None Include="build\DataJuggler.RealESRGAN.targets">
+			<Pack>true</Pack>
+			<PackagePath>build\DataJuggler.RealESRGAN.targets</PackagePath>
+		</None>
 	</ItemGroup>
 
+	<!-- Icon and ReadMe -->
 	<ItemGroup>
-	  <None Update="ReadMe.md">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
-	  <None Update="Upscale.png">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
+		<None Update="ReadMe.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Update="Upscale.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
 	</ItemGroup>
 
 </Project>

@@ -1,0 +1,11 @@
+﻿<Project>
+  <Target Name="CopyRealESRGANContent" AfterTargets="Build">
+    <ItemGroup>
+      <RealESRGANFiles Include="$(MSBuildThisFileDirectory)..\contentFiles\any\any\RealESRGAN\**\*.*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(RealESRGANFiles)"
+          DestinationFolder="$(OutputPath)RealESRGAN\%(RecursiveDir)"
+          SkipUnchangedFiles="true" />
+  </Target>
+</Project>
