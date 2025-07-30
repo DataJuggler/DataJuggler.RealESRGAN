@@ -48,7 +48,25 @@ divide the video into shorter segments.
 # Warning: If you split your video into parts, make sure to use the same upscale model for best results
 
 ---
+
+## Scale Factor
  
+The ScaleEnum in DataJuggler.RealESRGAN lets you choose how much to upscale your image: 2×, 3×, or 4×.
+The best scale depends on your starting resolution and your target output size.
+
+For example, if you're upscaling from 1280×720 and your final output is 1920×1080, then 2× is the closest match. 
+It avoids excessive processing time and preserves more visual clarity compared to scaling 4× and resizing down.
+
+🎯 Guidelines for Choosing a Scale:
+
+2× – Ideal when your target resolution is around double your original (e.g., 720p ➜ 1080p)
+
+3× – Rare, but supported for flexibility (if the model allows it)
+
+4× – Best when going from 1080p ➜ 4K or higher
+
+When in doubt, choose the scale that is closest to your desired size without requiring a large
+downscale after processing. This gives you faster performance and more consistent results.
 
 ## StatusUpdate Delegate (from DataJuggler.FFmpeg)
 
@@ -97,8 +115,11 @@ Upscales a single image using a specified model.
     int width = 1920;
     int height = 1080;
 
+    // Set the scale to 3x. I typically use 2 and Leonard Upscaler uses 2 as the default
+    ScaleEnum scale = ScaleEnum.Three_X;
+
     // perform the upscale
-    bool result = RealESRGANHelper.UpscaleImage(input, output, mode, width, height);
+    bool result = RealESRGANHelper.UpscaleImage(input, output, mode, scale, width, height);
 
 # Note: How Resizing To A Specific Size Works
 
@@ -107,7 +128,20 @@ will upscale the image by four times. Meaning an 800 x 600 image will becomes 32
 
 To convert to a specific size, my NuGet package DataJuggler.PixelDatabase will resize the image
 to the specific height and width. Under the hood DataJuggler.PixelDatabase using System.Drawing.
-This can and will stretch your image. 
+This can and will stretch your image.
+
+# Note: Scale
+
+Guidelines for Choosing a Scale:
+
+2× – Ideal when your target resolution is around double your original (e.g., 720p ➜ 1080p)
+
+3× – Rare, but supported for flexibility (if the model allows it)
+
+4× – Best when going from 1080p ➜ 4K or higher
+
+When in doubt, choose the scale that is closest to your desired size without requiring a large
+downscale after processing. This gives you faster performance and more consistent results.
 
 ### GetModelPath
 
@@ -170,6 +204,25 @@ below to choose the best model for your needs.
 ---
 
 ## Change Log
+
+7.30.2025: Version 1.0.1
+I added a Scale option. You must now pass in the ScaleEnum parameter for scale
+
+    // namespace
+    using DataJuggler.RealESRGAN.Enumerations;
+
+    #region enum ScaleEnum
+    /// <summary>
+    /// This is the option for scaling. I usually use 2x because it's faster
+    /// and 2x is closer to my usual target size of 1920 x 1080. 
+    /// </summary>
+    public enum ScaleEnum : int
+    {
+        Two_X = 2,
+        Three_X = 3,
+        Four_X = 4
+    }
+    #endregion
 
 7.29.2025: Version 1.0.0
 

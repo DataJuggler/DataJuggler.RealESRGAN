@@ -99,11 +99,11 @@ namespace DataJuggler.RealESRGAN
             }
             #endregion
             
-            #region UpscaleImage(string inputPath, string outputPath, UpscaleModelEnum mod, int width = 0, int height = 0
+            #region UpscaleImage(string inputPath, string outputPath, UpscaleModelEnum model, ScaleEnum scaleLevel, int height = 0, int width = 0)
             /// <summary>
             /// Upscales an image using RealESRGAN and writes output to specified location.
             /// </summary>
-            public static bool UpscaleImage(string inputPath, string outputPath, UpscaleModelEnum model, int width = 0, int height = 0)
+            public static bool UpscaleImage(string inputPath, string outputPath, UpscaleModelEnum model, ScaleEnum scaleLevel, int height = 0, int width = 0)
             {
                 // initial value
                 bool success = false;
@@ -116,13 +116,16 @@ namespace DataJuggler.RealESRGAN
                     // get the path for the model
                     string modelPath = GetModelPath(model);
 
+                    // convert enum to int
+                    int scale = (int) scaleLevel;
+
                     // Ensure the executable and input file exist
                     if (FileHelper.Exists(executablePath) && FileHelper.Exists(inputPath))
                     {
                         using (Process process = new Process())
                         {
                             process.StartInfo.FileName = executablePath;
-                            process.StartInfo.Arguments = $"-i \"{inputPath}\" -o \"{outputPath}\" -n {modelPath}";
+                            process.StartInfo.Arguments = $"-i \"{inputPath}\" -o \"{outputPath}\" -n {modelPath} -s {scale}";
                             process.StartInfo.CreateNoWindow = true;
                             process.StartInfo.UseShellExecute = false;
                             process.StartInfo.RedirectStandardOutput = true;
@@ -139,19 +142,22 @@ namespace DataJuggler.RealESRGAN
                             // Did this work?
                             success = FileHelper.Exists(outputPath);
 
-                            // if the upscale was successful and the width and height was passed in
+                            // if the upscale was successful and the width and height were passed in
                             if ((success) && (width > 0) && (height > 0))
-                            {  
+                            {
                                 // load a database    
-                                PixelDatabase.PixelDatabase resized = PixelDatabaseLoader.LoadPixelDatabase(outputPath, null);
+                                PixelDatabase.PixelDatabase pixelDatabase = PixelDatabaseLoader.LoadPixelDatabase(outputPath, null);
 
-                                // If the resized object exists
-                                if (NullHelper.Exists(resized))
+                                // If the pixelDatabase object exists
+                                if (NullHelper.Exists(pixelDatabase))
                                 {
-                                    // Delete the file
+                                    // resize the database
+                                    PixelDatabase.PixelDatabase resized = pixelDatabase.Resize(height, width);
+
+                                    // Delete the original file
                                     File.Delete(outputPath);
 
-                                    // Save the file
+                                    // Save the resized image
                                     resized.SaveAs(outputPath);
                                 }
                             }
