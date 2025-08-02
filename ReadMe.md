@@ -38,7 +38,7 @@ when the project builds.
 Upscaling can be extremely slow when processing large batches of images. For example, 
 a 2-minute video at 30 frames per second will produce 3,600 images. Depending on your 
 system, GPU, and source image resolution, each image can take anywhere from 
-**1 to 15 seconds** to upscale.
+**1 to 15 seconds**  or more to upscale.
 
 To speed up the workflow, it’s recommended to split longer videos into smaller chunks.  
 The `DataJuggler.FFmpeg` package includes a class called `FFmpegHelper` which provides
@@ -48,25 +48,6 @@ divide the video into shorter segments.
 # Warning: If you split your video into parts, make sure to use the same upscale model for best results
 
 ---
-
-## Scale Factor
- 
-The ScaleEnum in DataJuggler.RealESRGAN lets you choose how much to upscale your image: 2×, 3×, or 4×.
-The best scale depends on your starting resolution and your target output size.
-
-For example, if you're upscaling from 1280×720 and your final output is 1920×1080, then 2× is the closest match. 
-It avoids excessive processing time and preserves more visual clarity compared to scaling 4× and resizing down.
-
-🎯 Guidelines for Choosing a Scale:
-
-2× – Ideal when your target resolution is around double your original (e.g., 720p ➜ 1080p)
-
-3× – Rare, but supported for flexibility (if the model allows it)
-
-4× – Best when going from 1080p ➜ 4K or higher
-
-When in doubt, choose the scale that is closest to your desired size without requiring a large
-downscale after processing. This gives you faster performance and more consistent results.
 
 ## StatusUpdate Delegate (from DataJuggler.FFmpeg)
 
@@ -115,11 +96,8 @@ Upscales a single image using a specified model.
     int width = 1920;
     int height = 1080;
 
-    // Set the scale to 3x. I typically use 2 and Leonard Upscaler uses 2 as the default
-    ScaleEnum scale = ScaleEnum.Three_X;
-
     // perform the upscale
-    bool result = RealESRGANHelper.UpscaleImage(input, output, mode, scale, width, height);
+    bool result = RealESRGANHelper.UpscaleImage(input, output, mode, width, height);
 
 # Note: How Resizing To A Specific Size Works
 
@@ -130,18 +108,10 @@ To convert to a specific size, my NuGet package DataJuggler.PixelDatabase will r
 to the specific height and width. Under the hood DataJuggler.PixelDatabase using System.Drawing.
 This can and will stretch your image.
 
-# Note: Scale
-
-Guidelines for Choosing a Scale:
-
-2× – Ideal when your target resolution is around double your original (e.g., 720p ➜ 1080p)
-
-3× – Rare, but supported for flexibility (if the model allows it)
-
-4× – Best when going from 1080p ➜ 4K or higher
-
-When in doubt, choose the scale that is closest to your desired size without requiring a large
-downscale after processing. This gives you faster performance and more consistent results.
+## A Note About Scaling
+RealESRGAN upscaler has an option for Scale, but after trying found an issue on GitHub that is known. The upscaled
+images had problems with Scale and didn't work, so I took the scale out. If this issue is ever fixed I will add
+the scale option back.
 
 ### GetModelPath
 
@@ -204,6 +174,10 @@ below to choose the best model for your needs.
 ---
 
 ## Change Log
+
+8.2.2025: Version 1.0.5
+
+Scale Option didn't work, and resulted in broken images, so scale is gone for now
 
 7.30.2025: Version 1.0.1
 I added a Scale option. You must now pass in the ScaleEnum parameter for scale

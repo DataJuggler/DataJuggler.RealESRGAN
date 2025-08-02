@@ -99,11 +99,11 @@ namespace DataJuggler.RealESRGAN
             }
             #endregion
             
-            #region UpscaleImage(string inputPath, string outputPath, UpscaleModelEnum model, ScaleEnum scaleLevel, int height = 0, int width = 0)
+            #region UpscaleImage(string inputPath, string outputPath, UpscaleModelEnum model, int height = 0, int width = 0)
             /// <summary>
             /// Upscales an image using RealESRGAN and writes output to specified location.
             /// </summary>
-            public static bool UpscaleImage(string inputPath, string outputPath, UpscaleModelEnum model, ScaleEnum scaleLevel, int height = 0, int width = 0)
+            public static bool UpscaleImage(string inputPath, string outputPath, UpscaleModelEnum model, int height = 0, int width = 0)
             {
                 // initial value
                 bool success = false;
@@ -116,16 +116,13 @@ namespace DataJuggler.RealESRGAN
                     // get the path for the model
                     string modelPath = GetModelPath(model);
 
-                    // convert enum to int
-                    int scale = (int) scaleLevel;
-
                     // Ensure the executable and input file exist
                     if (FileHelper.Exists(executablePath) && FileHelper.Exists(inputPath))
                     {
                         using (Process process = new Process())
                         {
                             process.StartInfo.FileName = executablePath;
-                            process.StartInfo.Arguments = $"-i \"{inputPath}\" -o \"{outputPath}\" -n {modelPath} -s {scale}";
+                            process.StartInfo.Arguments = $"-i \"{inputPath}\" -o \"{outputPath}\" -n {modelPath}";
                             process.StartInfo.CreateNoWindow = true;
                             process.StartInfo.UseShellExecute = false;
                             process.StartInfo.RedirectStandardOutput = true;
