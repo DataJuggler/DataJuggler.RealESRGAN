@@ -175,6 +175,8 @@ below to choose the best model for your needs.
 
 ## Change Log
 
+3.29.2026: This project has been udpated to .NET10
+
 8.2.2025: Version 1.0.5
 
 Scale Option didn't work, and resulted in broken images, so scale is gone for now
